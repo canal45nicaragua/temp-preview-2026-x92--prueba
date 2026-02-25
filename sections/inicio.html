@@ -1,0 +1,48 @@
+<section class="live-section">
+    <div class="live-container">
+        
+        <div class="player-wrapper">
+            <div class="live-badge">
+                <span class="pulse-icon"></span> EN VIVO
+            </div>
+            
+            <div class="iframe-responsive-container" id="stream-box">
+                <iframe 
+                    id="player-iframe"
+                    src="https://hdbox.chunklistv.com/play/3abn-nicaragua"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                    scrolling="no" 
+                    frameborder="0" 
+                    allow="autoplay; fullscreen; encrypted-media" 
+                    allowfullscreen
+                    loading="eager">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="live-info-bar">
+            
+            <div class="info-item">
+                <span class="status-dot"></span>
+                <strong>EN VIVO:</strong> 
+                <span id="current-program">Sincronizando...</span>
+            </div>
+            
+            <div class="info-sep">|</div>
+            
+            <div class="info-item">
+                <i class="far fa-clock" style="color: var(--dorado-tv45); font-size: 0.85rem;"></i>
+                <strong>HORA NICARAGUA:</strong> 
+                <span id="live-clock">--:--</span>
+            </div>
+            
+            <div class="info-sep">|</div>
+            
+            <div class="info-item">
+                <strong>SIGUIENTE:</strong> 
+                <span id="next-program">Cargando...</span>
+            </div>
+            
+        </div>
+    </div>
+</section>

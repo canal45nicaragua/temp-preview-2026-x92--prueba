@@ -1,0 +1,13 @@
+[
+  { "archivo": "aniversario.jpg", "titulo": "5to Aniversario" },
+  { "archivo": "aniversario2.jpg", "titulo": "5to Aniversario" },
+  { "archivo": "aniversario3.jpg", "titulo": "5to Aniversario" },
+  { "archivo": "aniversario4.jpg", "titulo": "5to Aniversario" },
+  { "archivo": "evento1.jpg", "titulo": "Evento Inauguración" },
+  { "archivo": "estudio.jpg", "titulo": "Nuestros Estudios" },
+  { "archivo": "equipo.jpg", "titulo": "Equipo TV45" },
+  { "archivo": "aniversario.jpg", "titulo": "Aniversario" },
+  {"archivo": "bluefields.jpg", "titulo": "Blufields"},
+  {"archivo": "capacitacion.jpg", "titulo": "Capacitacion"},
+  {"archivo": "matiguas.jpg", "titulo": "Matiguas"}
+]

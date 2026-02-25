@@ -1,0 +1,1228 @@
+/* ========================================================================
+    PROYECTO: TV45 Nicaragua - Single Page Architecture
+    ESTRUCTURA: Modular con carga dinámica (Scroll Infinito)
+    COLORES CORP: Azul Marino (#1a2238), Rojo (#e30613), Dorado (#f0b429)
+========================================================================
+    ÍNDICE DE SECCIONES:
+    1. VARIABLES Y CONFIGURACIÓN GLOBAL
+    2. HEADER Y LOGOTIPO (OPTIMIZADO PARA SCROLL)
+    3. NAVEGACIÓN PRINCIPAL (MENU)
+    4. CONTENEDOR DINÁMICO (MAIN WRAPPER)
+    5. REPRODUCTOR LIVE Y BARRA INFORMATIVA (OPTIMIZADO)
+    6. COMPONENTES DE CARGA (SPINNER)
+    7. FOOTER (PIE DE PÁGINA - DISEÑO INTERACTIVO 2026)
+    8. MEDIA QUERIES (RESPONSIVE DESIGN)
+    9. SECCIÓN NOSOTROS (INTEGRADO - MANTENER COMENTARIOS)
+    10. SECCIÓN ORACIÓN (PEDIDOS DE ORACIÓN + VALIDACIONES)
+    11. CAPA DE ESTABILIDAD Y FIX MÓVIL
+    12. SECCIÓN DONACIONES (ESTILO DARK GLASS - INTEGRADO CON LOGO SVG)
+    13. MEDIDAS DE SEGURIDAD Y PROTECCIÓN DE DATOS
+    14. SECCIÓN GALERÍA (AUTO-LOAD RUTA resources\img + WATERMARK)
+    15. BOTONES FLOTANTES (SCROLL TOP & WHATSAPP - ESTILO 2026)
+========================================================================
+*/
+
+/* --- 1. VARIABLES Y CONFIGURACIÓN GLOBAL --- */
+:root {
+    --rojo-tv45: #e30613;
+    --azul-profundo: #1a2238; 
+    --dorado-tv45: #f0b429;
+    --blanco: #ffffff;
+    --gris-fondo: #0a0f1a;
+    --texto-oscuro: #1a2238;
+    --gray-text: #b0b3b9;
+    --glass: rgba(10, 15, 26, 0.95); 
+    --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.5);
+    --transition: all 0.4s ease-in-out;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--blanco);
+    line-height: 1.5;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    font-size: 14px; 
+}
+
+/* --- 2. HEADER Y LOGOTIPO --- */
+.main-header {
+    background: transparent; 
+    position: fixed; 
+    width: 100%;
+    top: 0; 
+    left: 0;
+    z-index: 2000;
+    transition: var(--transition);
+}
+
+.main-header.scrolled {
+    background-color: var(--gris-fondo); 
+    box-shadow: var(--sombra-suave);
+    padding: 5px 0;
+    border-bottom: 2px solid var(--dorado-tv45);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10%;
+    transition: var(--transition);
+}
+
+.logo-img {
+    height: 65px; 
+    width: auto;
+    display: block;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.main-header.scrolled .logo-img {
+    height: 50px; 
+}
+
+/* --- 3. NAVEGACIÓN PRINCIPAL (MENU) --- */
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--blanco);
+    font-weight: 800;
+    font-size: 0.85rem; 
+    text-transform: uppercase;
+    transition: var(--transition);
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.main-nav a i {
+    color: var(--dorado-tv45);
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.main-nav a:hover {
+    color: var(--dorado-tv45);
+    transform: translateY(-3px);
+}
+
+.main-nav a:hover i {
+    transform: scale(1.2);
+}
+
+/* --- 4. CONTENEDOR DINÁMICO (MAIN WRAPPER) --- */
+#main-wrapper {
+    min-height: 70vh;
+    padding: 110px 10% 80px; 
+    animation: transitionIn 0.5s ease-out;
+}
+
+@keyframes transitionIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 5. REPRODUCTOR LIVE Y BARRA INFORMATIVA (OPTIMIZADO) --- */
+.live-container {
+    max-width: 1100px; 
+    margin: 0 auto;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+    border: 1px solid rgba(240, 180, 41, 0.2);
+    position: relative; 
+}
+
+.player-wrapper {
+    position: relative;
+    width: 100%;
+    background: #000;
+}
+
+.iframe-responsive-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 56.25%; 
+    height: 0;
+}
+
+.iframe-responsive-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    border: 0;
+}
+
+.live-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--rojo-tv45);
+    color: white;
+    padding: 6px 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 100;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.pulse-icon {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse-animation 1.5s infinite;
+}
+
+@keyframes pulse-animation {
+    0% { transform: scale(0.9); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(0.9); opacity: 1; }
+}
+
+.live-info-bar {
+    background: #000;
+    border-top: 1px solid var(--dorado-tv45);
+    display: flex;
+    flex-direction: row; 
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px; 
+    color: white;
+    font-size: 0.75rem; 
+    gap: 25px;
+    white-space: nowrap; 
+    overflow: hidden;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#current-program, #next-program, #live-clock {
+    font-weight: 800; 
+    color: var(--blanco);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.info-item strong {
+    color: var(--dorado-tv45);
+    text-transform: uppercase;
+    font-weight: 900; 
+}
+
+.info-sep {
+    color: rgba(255, 255, 255, 0.2);
+    font-weight: 100;
+}
+
+.status-dot {
+    height: 10px;
+    width: 10px;
+    background-color: var(--rojo-tv45);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px var(--rojo-tv45);
+    flex-shrink: 0;
+}
+
+/* --- 6. COMPONENTES DE CARGA (SPINNER) --- */
+.loading-spinner {
+    text-align: center;
+    padding: 60px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--dorado-tv45);
+}
+
+/* --- 7. FOOTER (PIE DE PÁGINA - DISEÑO INTERACTIVO 2026) --- */
+.main-footer-container {
+    background-color: #050a14;
+    color: var(--blanco);
+    padding: 60px 10% 20px;
+    border-top: 5px solid var(--dorado-tv45);
+    font-family: inherit;
+}
+
+.footer-top-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-title {
+    color: var(--dorado-tv45);
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer-text {
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: var(--blanco);
+}
+
+.footer-social-icons {
+    display: flex;
+    gap: 20px;
+    font-size: 1.5rem;
+}
+
+.footer-social-icons a {
+    color: var(--blanco);
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.footer-social-icons a:hover {
+    color: var(--dorado-tv45);
+    transform: translateY(-5px);
+}
+
+.footer-list {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-contact-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: default;
+}
+
+.contact-link, .footer-contact-item span {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-contact-item:hover {
+    transform: translateX(10px);
+}
+
+.footer-contact-item:hover .contact-link,
+.footer-contact-item:hover span {
+    color: var(--dorado-tv45);
+}
+
+.footer-contact-item i {
+    color: var(--dorado-tv45);
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.footer-contact-item:hover i {
+    transform: scale(1.3);
+}
+
+.icon-gold {
+    color: var(--dorado-tv45) !important;
+}
+
+.text-italic {
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.footer-bottom-bar {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 25px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--gray-text);
+}
+
+.footer-bottom-bar strong {
+    color: var(--blanco);
+}
+
+/* --- 8. MEDIA QUERIES (RESPONSIVE DESIGN) --- */
+@media (max-width: 768px) {
+    .header-container { padding: 10px 5%; }
+    .logo-img { height: 50px; }
+    .main-nav { display: none; }
+    #main-wrapper { padding: 90px 5% 50px; }
+    
+    .footer-top-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-social-icons {
+        justify-content: center;
+    }
+    
+    .footer-contact-item {
+        justify-content: center;
+    }
+
+    .footer-contact-item:hover {
+        transform: none;
+    }
+}
+
+/* --- 9. SECCIÓN NOSOTROS (INTEGRADO - MANTENER COMENTARIOS) --- */
+.about-section {
+    padding: 60px 0;
+}
+
+.about-container {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03); 
+    padding: 50px;
+    max-width: 1200px; 
+    margin: 0 auto;
+    border-radius: 20px;
+    color: var(--blanco);
+    border: 1px solid rgba(240, 180, 41, 0.1);
+}
+
+.about-image {
+    flex: 1;
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--sombra-suave);
+}
+
+.about-image img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.about-image:hover img {
+    transform: scale(1.03);
+}
+
+.experience-badge {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: var(--dorado-tv45);
+    color: var(--azul-profundo);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 900;
+    line-height: 1.2;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+.experience-badge .years { font-size: 1.8rem; display: block; }
+.experience-badge .exp-text { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+
+.about-text {
+    flex: 1.2;
+}
+
+.about-text h5 {
+    color: var(--dorado-tv45);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.about-text h2 { 
+    color: var(--blanco); 
+    font-size: 2.2rem; 
+    margin-bottom: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.accent-line {
+    width: 80px;
+    height: 4px;
+    background-color: var(--dorado-tv45) !important;
+    margin-bottom: 25px;
+    border: none;
+    border-radius: 50px;
+}
+
+.main-description {
+    font-size: 1rem; 
+    margin-bottom: 20px;
+    color: var(--blanco);
+}
+
+.purpose-box {
+    background: rgba(227, 6, 19, 0.08); 
+    padding: 25px;
+    border-left: 5px solid var(--rojo-tv45);
+    margin: 30px 0;
+    border-radius: 0 15px 15px 0;
+}
+
+.purpose-box h3 {
+    color: var(--dorado-tv45);
+    margin-bottom: 12px;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.purpose-box p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.additional-info {
+    color: var(--gray-text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* --- 10. SECCIÓN ORACIÓN (PEDIDOS DE ORACIÓN + VALIDACIONES) --- */
+.prayer-section {
+    padding: 60px 0;
+    animation: transitionIn 0.8s ease-out;
+}
+
+.prayer-container {
+    max-width: 1200px; 
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 50px; 
+    border-radius: 20px;
+    border: 1px solid rgba(240, 180, 41, 0.1);
+    text-align: center;
+}
+
+.prayer-header h2 {
+    font-size: 2.2rem; 
+    font-weight: 800;
+    margin: 10px 0;
+}
+
+.prayer-icon {
+    font-size: 2.5rem;
+    color: var(--dorado-tv45);
+    margin-bottom: 10px;
+}
+
+.accent-line.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.prayer-form {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--dorado-tv45);
+    text-transform: uppercase;
+}
+
+.prayer-form input, 
+.prayer-form textarea,
+.select-pais {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--blanco);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.select-pais {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23f0b429' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 15px) center;
+}
+
+.select-pais option {
+    background: #0a0f1a;
+    color: white;
+}
+
+.prayer-form input:focus, 
+.prayer-form textarea:focus,
+.select-pais:focus {
+    outline: none;
+    border-color: var(--dorado-tv45);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-submit {
+    background: var(--dorado-tv45);
+    color: var(--azul-profundo);
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    width: fit-content;
+    min-width: 200px;
+    align-self: center;
+}
+
+.btn-submit:hover {
+    background: var(--blanco);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(240, 180, 41, 0.3);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* --- 11. CAPA DE ESTABILIDAD Y FIX MÓVIL --- */
+.dynamic-section {
+    width: 100%;
+    display: block;
+    position: relative;
+    clear: both; 
+    margin-bottom: 60px;
+}
+
+#section-inicio { min-height: 400px; }
+#section-nosotros { scroll-margin-top: 100px; }
+#section-oracion { scroll-margin-top: 100px; }
+
+/* Responsive General para secciones dinámicas */
+@media (max-width: 992px) {
+    .about-container, .prayer-container { 
+        flex-direction: column; 
+        padding: 30px; 
+        text-align: center;
+        width: 95%;
+    }
+    .about-image { width: 100%; max-width: 600px; }
+    .about-image img { height: 350px; }
+    .accent-line { margin: 0 auto 25px auto; }
+}
+
+@media (max-width: 768px) {
+    .main-nav { display: none !important; }
+    .header-container { justify-content: center; padding: 15px 0; }
+    .logo-img { height: 45px; }
+    #main-wrapper { padding: 90px 4% 20px; }
+    
+    .live-container { border-radius: 0; border: none; width: 100%; }
+    .live-info-bar { flex-direction: column; gap: 8px; text-align: center; font-size: 0.7rem; white-space: normal; }
+    
+    .form-row { flex-direction: column; }
+    .prayer-container {
+        padding: 30px 20px;
+        border-radius: 0;
+        background: transparent;
+        width: 100%;
+    }
+    .about-text h2, .prayer-header h2 { font-size: 1.8rem; }
+}
+
+/* --- 12. SECCIÓN DONACIONES (ESTILO DARK GLASS - INTEGRADO CON LOGO SVG) --- */
+.donation-section {
+    padding: 60px 0;
+    animation: transitionIn 0.8s ease-out;
+}
+
+.donation-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.main-heart {
+    color: var(--rojo-tv45);
+    font-size: 4.5rem; 
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 15px rgba(227, 6, 19, 0.5));
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.donation-header h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--blanco);
+}
+
+.donation-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.donation-card {
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(240, 180, 41, 0.1);
+    padding: 40px 30px;
+    border-radius: 25px;
+    color: var(--blanco); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.donation-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--dorado-tv45);
+}
+
+.card-icon-top {
+    font-size: 2.5rem;
+    color: var(--dorado-tv45); 
+    margin-bottom: 20px;
+}
+
+.donation-card h3 {
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    color: var(--blanco);
+}
+
+.card-icon {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 30px !important; 
+    margin-bottom: 25px !important;
+    width: 100%;
+    align-items: center;
+    min-height: 80px;
+}
+
+.card-icon i.fab {
+    font-size: 3.8rem !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    cursor: pointer;
+}
+
+.card-icon i.fa-cc-visa { color: #4b68ff !important; }
+.card-icon i.fa-cc-visa:hover {
+    transform: translateY(-10px) scale(1.15);
+    filter: drop-shadow(0 5px 15px rgba(75, 104, 255, 0.4));
+}
+
+.card-icon i.fa-cc-mastercard { color: #eb001b !important; }
+.card-icon i.fa-cc-mastercard:hover {
+    transform: translateY(-10px) scale(1.15);
+    filter: drop-shadow(0 5px 15px rgba(235, 0, 27, 0.4));
+}
+
+.pagadito-svg {
+    height: 38px;
+    width: auto;
+    color: #ffffff; 
+    display: inline-block;
+    vertical-align: middle;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
+    transition: all 0.4s ease-in-out;
+    cursor: pointer;
+}
+
+.pagadito-svg:hover {
+    transform: translateY(-10px) scale(1.15);
+    color: var(--dorado-tv45); 
+    filter: drop-shadow(0px 5px 15px rgba(240, 180, 41, 0.5));
+}
+
+.method-desc {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    font-weight: 600; 
+    color: var(--blanco);
+    max-width: 280px;
+    text-align: center;
+}
+
+.bank-tag {
+    display: block;
+    font-weight: 700 !important;
+    color: var(--dorado-tv45);
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.bank-info-list {
+    text-align: left;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05); 
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.bank-info-list p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: var(--blanco);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 8px;
+    font-weight: 500;
+}
+
+.bank-info-list strong {
+    color: var(--dorado-tv45);
+    font-weight: 700;
+}
+
+.btn-donate-yellow {
+    background: var(--dorado-tv45);
+    color: var(--azul-profundo);
+    text-decoration: none;
+    padding: 18px 40px;
+    border-radius: 50px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 8px 15px rgba(240, 180, 41, 0.3);
+    margin-top: auto; 
+    width: fit-content;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-donate-yellow:hover {
+    background: var(--blanco);
+    color: var(--azul-profundo);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 20px rgba(240, 180, 41, 0.4);
+}
+
+/* --- 13. MEDIDAS DE SEGURIDAD Y PROTECCIÓN DE DATOS --- */
+.secure-text {
+    user-select: text;
+    font-family: 'Courier New', monospace;
+    color: var(--blanco);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.btn-secure {
+    box-shadow: 0 0 10px rgba(240, 180, 41, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-secure:hover {
+    box-shadow: 0 0 20px rgba(240, 180, 41, 0.5);
+    filter: brightness(1.1);
+}
+
+.donation-card iframe {
+    display: none !important;
+    pointer-events: none;
+}
+
+/* --- 14. SECCIÓN GALERÍA (AUTO-LOAD RUTA resources\img + WATERMARK) --- */
+.gallery-section {
+    padding: 80px 0;
+    animation: transitionIn 0.8s ease-out;
+}
+
+.gallery-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.gallery-slider-wrapper {
+    position: relative;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(240, 180, 41, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.gallery-track {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    gap: 15px;
+    padding: 20px;
+}
+
+.gallery-item {
+    min-width: calc(100% - 40px);
+    height: 400px;
+    position: relative; 
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+}
+
+@media (min-width: 768px) {
+    .gallery-item {
+        min-width: calc(33.333% - 10px);
+        height: 350px;
+    }
+}
+
+.gallery-item img:not(.watermark) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+/* Estilo Base para Watermark */
+.watermark-mini, .watermark-max {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    transition: var(--transition);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Versión Minimizada: Esquina Superior Derecha */
+.watermark-mini {
+    top: 15px;
+    right: 15px;
+    opacity: 0.6;
+}
+
+.watermark-mini img {
+    height: 30px !important;
+    width: auto !important;
+    object-fit: contain !important;
+}
+
+/* --- FIX MODAL: Alineación del Watermark Maximizado --- */
+.modal-image-wrapper {
+    position: relative; 
+    display: inline-block; 
+    max-width: 90%;
+    margin: auto;
+}
+
+.modal-image-wrapper img:not(.watermark) {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    border: none; /* Eliminado el borde dorado para estilo Clean */
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+}
+
+/* Watermark maximizado: Esquina Inferior Izquierda, más grande y sin bordes */
+.modal-image-wrapper .watermark-max {
+    position: absolute;
+    bottom: 25px;   /* Posición Inferior */
+    left: 25px;     /* Posición Izquierda */
+    width: 150px;   /* Tamaño aumentado */
+    height: auto;
+    opacity: 0.9;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.modal-image-wrapper .watermark-max img {
+    width: 100%;
+    height: auto !important;
+    filter: drop-shadow(2px 2px 8px rgba(0,0,0,0.8));
+    border: none !important;      /* Asegura que no haya contorno */
+    background: none !important;  /* Asegura que no haya fondo */
+    padding: 0 !important;
+}
+
+.gallery-item:hover .watermark-mini {
+    opacity: 0.9;
+    transform: scale(1.1);
+}
+
+.gallery-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(26, 34, 56, 0.9), transparent);
+    padding: 20px;
+    color: var(--blanco);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+    text-align: center;
+    z-index: 6;
+}
+
+.gallery-item:hover .gallery-info { opacity: 1; transform: translateY(0); }
+.gallery-item:hover img:not(.watermark) { transform: scale(1.1) rotate(1deg); }
+
+.gallery-info span {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    color: var(--dorado-tv45);
+}
+
+/* Slider Controls */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--dorado-tv45);
+    color: var(--azul-profundo);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: var(--transition);
+}
+
+.slider-btn:hover { background: var(--blanco); }
+.prev-btn { left: 15px; }
+.next-btn { right: 15px; }
+
+/* Lightbox Modal */
+.gallery-modal {
+    display: none; 
+    position: fixed;
+    z-index: 3000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(10, 15, 26, 0.98);
+    backdrop-filter: blur(15px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    width: 85vw;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#modal-caption {
+    margin-top: 20px;
+    height: 30px;
+    color: var(--dorado-tv45);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    color: white;
+    font-size: 45px;
+    cursor: pointer;
+    z-index: 3100;
+    transition: var(--transition);
+}
+
+.modal-close:hover { color: var(--dorado-tv45); transform: scale(1.1); }
+
+.modal-nav {
+    position: absolute;
+    background: rgba(240, 180, 41, 0.1);
+    color: white;
+    border: 2px solid var(--dorado-tv45);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    z-index: 3100;
+}
+
+.modal-nav:hover { background: var(--dorado-tv45); color: var(--azul-profundo); }
+.modal-nav.prev { left: 3%; }
+.modal-nav.next { right: 3%; }
+
+@media (max-width: 768px) {
+    .modal-content { width: 95vw; height: 60vh; }
+    .modal-image-wrapper .watermark-max { bottom: 15px; left: 15px; width: 80px; }
+    .modal-nav { width: 40px; height: 40px; bottom: 20px; }
+    .modal-nav.prev { left: 30%; }
+    .modal-nav.next { right: 30%; }
+}
+
+/* ========================================================================
+    15. BOTONES FLOTANTES (SCROLL TOP & WHATSAPP - ESTILO 2026)
+======================================================================== */
+.floating-buttons-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 3000;
+}
+
+#scrollTopBtn {
+    width: 55px;
+    height: 55px;
+    background-color: #1a2238; 
+    color: #f0b429; 
+    border: 2.5px solid #f0b429; 
+    border-radius: 50%;
+    cursor: pointer;
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    outline: none;
+}
+
+#scrollTopBtn:hover {
+    transform: translateY(-5px);
+    background-color: #f0b429;
+    color: #1a2238;
+}
+
+.whatsapp-float {
+    width: 55px;
+    height: 55px;
+    background-color: #25d366; 
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    animation: whatsapp-pulse 2s infinite;
+}
+
+.whatsapp-float:hover {
+    transform: translateY(-5px) scale(1.1);
+    background-color: #20ba5a;
+}
+
+@keyframes whatsapp-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+@media (max-width: 768px) {
+    .floating-buttons-container {
+        bottom: 20px;
+        right: 20px;
+        gap: 10px;
+    }
+    #scrollTopBtn, .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+    }
+    .whatsapp-float { font-size: 26px; }
+}

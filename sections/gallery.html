@@ -1,0 +1,40 @@
+<section class="gallery-section" id="section-galeria">
+    <div class="gallery-container">
+        
+        <div class="prayer-header">
+            <i class="fas fa-images prayer-icon"></i>
+            <h2>Nuestra Galería</h2>
+            <div class="accent-line center"></div>
+        </div>
+
+        <div class="gallery-slider-wrapper">
+            <button class="slider-btn prev-btn" onclick="moveSlider(-1)" aria-label="Anterior">❮</button>
+            <button class="slider-btn next-btn" onclick="moveSlider(1)" aria-label="Siguiente">❯</button>
+            
+            <div class="gallery-track" id="gallery-track">
+                <div class="loading-spinner">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <p>Cargando momentos TV45...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gallery-modal" class="gallery-modal">
+        <span class="modal-close" onclick="closeLightbox()">&times;</span>
+        
+        <button class="modal-nav prev" onclick="changeLightboxImage(-1)" aria-label="Imagen anterior">❮</button>
+        <button class="modal-nav next" onclick="changeLightboxImage(1)" aria-label="Siguiente imagen">❯</button>
+        
+        <div class="modal-content">
+            <div class="modal-image-wrapper">
+                <img id="modal-img" src="" alt="Imagen maximizada">
+                
+                <div class="watermark-max">
+                    <img src="resources/tv45nicaragua.png" alt="TV45 Watermark">
+                </div>
+            </div>
+            <p id="modal-caption"></p>
+        </div>
+    </div>
+</section>
